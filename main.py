@@ -23,8 +23,9 @@ body=""
 for article in articles_list[:20]:
     if article["title"] is not None:
        body = body + article["title"] +"\n"+ article["url"]+ 2*"\n"
+ 
   
-send_email(email_body=body,)
+send_email(email_body=body, receiver="123")
 
 
 

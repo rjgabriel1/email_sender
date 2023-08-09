@@ -5,7 +5,7 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 load_dotenv()
 
-def send_email(email_body: str, subject: str =None,  receiver:list | str =None):
+def send_email(email_body: str,  receiver:list | str = None, subject: str =None):
     """
     Send an Email
     :param subject: Email subject
@@ -19,12 +19,13 @@ def send_email(email_body: str, subject: str =None,  receiver:list | str =None):
     username = os.getenv("USERNAME")
     password = os.getenv('PASSWORD')
     context = ssl.create_default_context()
-  
-    if receiver:
-        email_to = receiver
+    
+
+    if receiver is not None:
+        email_to=receiver
     else:
-        email_to = "gabrieljeffersonralph@gmail.com"
-        
+        exit("Invalid email destination", code=553)
+    
     if subject:
         subject=subject
     else:
@@ -35,12 +36,14 @@ def send_email(email_body: str, subject: str =None,  receiver:list | str =None):
 
 # {email_body}
 # """
-    em = EmailMessage()
-    em.set_content(email_body)
-    em["To"]= email_to
-    em["From"]= username
-    em["Subject"]= subject
-    
+    try:
+        em = EmailMessage()
+        em.set_content(email_body)
+        em["To"]= receiver
+        em["From"]= email_to
+        em["Subject"]= subject
+    except UnboundLocalError as e:
+        exit(e)
 
     with smtplib.SMTP_SSL(host=host, port=port, context=context) as server:
         try:
