@@ -5,53 +5,46 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 load_dotenv()
 
-def send_email(email_body: str,  receiver:list | str = None, subject: str =None):
+
+def send_email(email_body: str, receiver: list | str = None, subject: str = None):
     """
     Send an Email
     :param subject: Email subject
-    :param  email_body: Content of the mail
-    :param receiver: Receipient it can be a list or a string
+    :param email_body: Content of the mail
+    :param receiver: Recipient, can be a list or a string
     """
-    
-    # create a connection to the Gmail server
-    host = os.getenv("HOST")
-    port = os.getenv('PORT')
-    username = os.getenv("USERNAME")
-    password = os.getenv('PASSWORD')
-    context = ssl.create_default_context()
-    
 
+    # Set up email configuration
+    host = os.getenv("HOST")
+    port = os.getenv("PORT")
+    username = os.getenv("USERNAME")
+    password = os.getenv("PASSWORD")
+    context = ssl.create_default_context()
+    name="TEKHUB"
     if receiver is not None:
-        email_to=receiver
+        receivers = receiver
     else:
         exit("Invalid email destination", code=553)
-    
+
     if subject:
-        subject=subject
+        _subject = subject
     else:
-        subject="Today's News"
-    # Format the message to have subject and body
-#         message = f"""\
-# Subject:{subject}
+        _subject = "Today's News"
 
-# {email_body}
-# """
+    # Create and send the email
     try:
-        em = EmailMessage()
-        em.set_content(email_body)
-        em["To"]= receiver
-        em["From"]= email_to
-        em["Subject"]= subject
-    except UnboundLocalError as e:
-        exit(e)
-
-    with smtplib.SMTP_SSL(host=host, port=port, context=context) as server:
-        try:
+        email_message = EmailMessage()
+        email_message.set_content(email_body)
+        email_message.add_header("From",f'{name} <{username}>')
+        email_message["Bcc"] = receivers
+        email_message["Subject"] = _subject
+        with smtplib.SMTP_SSL(host=host, port=port, context=context) as server:
             server.login(username, password)
-            server.send_message(em)
-        except smtplib.SMTPException as ERROR:
-            print("Unable to send email.",ERROR)
+            server.send_message(email_message)
+    except (UnboundLocalError, smtplib.SMTPException) as error:
+        print("Unable to send email.", error)
+
 
 
 if __name__ == "__main__":
-    send_email("Just a test..", "Trying something with python.")
+    send_email(email_body="Just a test..",receiver=["gabrieljeffersonralph@gmail.com", "EXAMPLE@icloud.com"],subject="Trying something with python.")
