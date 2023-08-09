@@ -19,8 +19,9 @@ def send_email(email_body: str, receiver: list | str = None, subject: str = None
     port = os.getenv("PORT")
     username = os.getenv("USERNAME")
     password = os.getenv("PASSWORD")
-    context = ssl.create_default_context()
-    name="TEKHUB"
+    name=os.getenv("APP_NAME")
+    context = ssl.create_default_context() 
+    
     if receiver is not None:
         receivers = receiver
     else:
@@ -47,4 +48,4 @@ def send_email(email_body: str, receiver: list | str = None, subject: str = None
 
 
 if __name__ == "__main__":
-    send_email(email_body="Just a test..",receiver=["gabrieljeffersonralph@gmail.com", "EXAMPLE@icloud.com"],subject="Trying something with python.")
+    send_email(email_body="Just a test..",receiver=["random@gmail.com", "EXAMPLE@icloud.com"],subject="Trying something with python.")

@@ -3,4 +3,4 @@
 .DS_Store
 .env
 email_list.txt
-__pycache__
+pycache
